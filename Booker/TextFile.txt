@@ -1,0 +1,47 @@
+﻿using Booker.Models;
+using System.Linq;
+
+namespace Booker.Repositories
+{
+    public class BookRepository : IBookRepository
+    {
+        private readonly BookContext _context;
+        public BookRepository(BookContext context)
+        {
+            _context = context;
+        }
+
+        public BooksModel Get(int booksId)
+            => _context.Books.SingleOrDefault(x => x.BookId == booksId); 
+
+        public IQueryable<BooksModel> GetAll()
+            => _context.Books.Where(x => x.BookId > 0);
+        
+
+        public void Add(BooksModel book)
+        {
+            _context.Books.Add(book);
+            _context.SaveChanges();
+        }
+
+        public void Delete(int booksId)
+        {
+            var result = _context.Books.SingleOrDefault(x => x.BookId == booksId);
+            _context.SaveChanges();
+        }        
+
+        public void Update(int booksId, BooksModel book)
+        {
+            var result = _context.Books.SingleOrDefault(x => x.BookId == booksId);
+            if (result != null)
+            {
+                result.Title = book.Title;
+                result.Author = book.Author;
+                result.Publisher = book.Publisher;
+                result.Publishdate = book.Publishdate;
+
+                _context.SaveChanges();
+            }
+        }
+    }
+}
